@@ -1,3 +1,5 @@
+import math
+
 class Car:
     def __init__(self, actor, name, mass, x, y):
         self.mass = mass
@@ -22,8 +24,21 @@ class Car:
         #Uses an array of some torque curves and interpolation
         pass
 
+
+    def set_gear(self):
+        if(self.rpm > 6500 and self.gear == 6):
+            self.rpm = 6500
+        elif(self.rpm > 6500 and self.gear < 6):
+            self.gear = self.gear + 1
+
+
     #Engine's forces
     def traction(self, differential_ratio, throttle_position):
+        wheel_radius = 0.33
+        gear_ratio= [0.0, 2.66, 1.30, 1.78, 1.0, 0.74, 0.50]
+        wheel_rotation_rate = self.velocity / wheel_radius
+        self.rpm = wheel_rotation_rate * gear_ratio[self.gear] * differential_ratio * 60 / 2 * math.pi
+        self.set_gear()
         #self.max_torque = find_max_torque(self.rpm)
         self.max_torque = 475.7
 
@@ -32,7 +47,6 @@ class Car:
         # In foot-pounds
         self.hp = self.engine_torque * self.rpm / 5252
 
-        gear_ratio= [0.0, 2.66, 1.78, 1.0, 0.74, 0.50]
         self.crankshaft_torque = (gear_ratio[self.gear] * differential_ratio) * 0.7
 
         #FDrive = Torque at 'x' rpm * gear_ratio * differential_ratio
