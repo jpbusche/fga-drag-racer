@@ -29,6 +29,7 @@ world = World()
 def update(dt):
     screen.clear()
 
+    screen.blit(('backgroundpng'), pos=(0,0))
     reset_car_pos(car_1)
     change_gear(car_1)
     check_brake(car_1, dt)
@@ -75,7 +76,8 @@ def check_brake(car_object,dt):
     else:
         pass
 
-car_1 = Car(Actor('notacar75px'), "Carro 1", 1000, 300, 500, 6500)
+car_1 = Car(Actor('car'), "Carro 1", 1000, 300, 500, 6500)
+
 
 #Puts car_1 in first gear - Make it possible to move
 car_1.gear = 1

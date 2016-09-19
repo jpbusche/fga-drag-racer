@@ -41,11 +41,11 @@ class Car:
         # Workarround for wheel rotation ratio (Diveded by 10)
         wheel_rotation_rate = self.velocity / wheel_radius / 10
 
-        if self.rpm <= self.max_rpm and self.throttle_position > 0.05:
+        if self.rpm <= self.max_rpm:
             self.rpm = wheel_rotation_rate * gear_ratio[self.gear] * differential_ratio * 60 / 2 * math.pi
         elif self.throttle_position <= 0.05 and self.velocity < 8/3.6:
             self.rpm = 900
-        elif self.rpm >= self.max_rpm:
+        elif self.rpm > self.max_rpm:
             self.rpm = self.max_rpm - 500
             return 0
 
