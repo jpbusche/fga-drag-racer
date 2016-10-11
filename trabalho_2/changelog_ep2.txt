@@ -1,0 +1,11 @@
+Alpha v1.0.1 - 10/10/2016
+- Changed Rolling Resistance equation
+- Changed Drag resistance equation
+- Changed Car's new position using integration and constant
+- RPM calculation fixes
+- Changed car constants
+- Using Pygame Keydown verification for breaking
+- Background is now an object
+- Background now moves according to car's velocity (Future camera simulation)
+  * BUG: There's a gap depending on the situation
+- Added auto_gear (Automatic Transmission)
