@@ -31,7 +31,7 @@ class Car:
         self.C_BRAKE = 9000
         self.breaking = False
 
-        self.last_dt = 0
+        self.road_increment = 0
 
     def auto_gear(self):
         change_gear_rpm = self.max_rpm
@@ -110,8 +110,8 @@ class Car:
         self.calculate_forces()
         self.calculate_velocity(dt)
 
-        self.y = self.y + -self.velocity * C_MOVE * dt
-        self.last_dt = dt
+        #self.y = self.y + -self.velocity * C_MOVE * dt
+        self.road_increment = self.velocity * C_MOVE * dt
 
         #DEBUG
         #self.print_stats()

@@ -9,3 +9,10 @@ Alpha v1.0.1 - 10/10/2016
 - Background now moves according to car's velocity (Future camera simulation)
   * BUG: There's a gap depending on the situation
 - Added auto_gear (Automatic Transmission)
+
+Alpha v1.0.2 - 12/10/2016
+- FIXED: Gap bug
+- FIXED: Window size
+- NEW: Now player's car has a "fixed camera"
+- CHANGED: update_background is now move_road
+- REMOVED: reset_car_pos
