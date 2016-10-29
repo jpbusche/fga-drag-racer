@@ -16,3 +16,14 @@ Alpha v1.0.2 - 12/10/2016
 - NEW: Now player's car has a "fixed camera"
 - CHANGED: update_background is now move_road
 - REMOVED: reset_car_pos
+
+Alpha v1.0.3 - 13/10/2016 | 29/10/2016
+- NEW: linear_guess for torque calculation
+- NEW: Rev Limiter
+- NEW: Engine Breaking (Vaccum)
+- NEW: Now you can choose to go with auto or manual
+- NEW: Traveled Distance (m)
+- CHANGED: Breaking function now works with pygamezero
+- FIXED: Using up arrow causes car to go back
+- FIXED: Now the car can properly shift gears
+- REMOVED: change_gear

@@ -1,10 +1,11 @@
 import math
 
 class Car:
-    def __init__(self, actor, name, mass, x, y, max_rpm):
+    def __init__(self, actor, name, mass, x, y, max_rpm, automatic):
         self.mass = mass
         self.name = name
         self.actor = actor
+        self.automatic = automatic
 
         self.x = x
         self.y = y
@@ -20,6 +21,7 @@ class Car:
         self.engine_torque = 0
         self.crankshaft_torque = 0
         self.acceleration = 0
+        self.distance = 0
         self.forces = 0
 
         self.differential_ratio = 3.42
@@ -45,6 +47,7 @@ class Car:
             return
 
         v_max_lg = 0.34 * 2 * math.pi *  self.max_rpm / (60 * self.gear_ratio[self.gear - 1] * self.differential_ratio)
+
         if self.velocity < v_max_lg and self.gear > 1:
             self.gear -= 1
 
@@ -52,12 +55,41 @@ class Car:
             self.velocity -= 2
             return
 
-    def find_max_torque(self):
-        #To-do: Uses an array of some torque curves and interpolation
-        for line in range(0,7):
-            if self.rpm >= self.torque_array[line][0] or self.rpm < self.torque_array[line + 1][0]:
-                return self.torque_array[line][1]
+    def rev_limiter(self):
+        if self.rpm >= self.max_rpm:
+            self.rpm -= 300
+            return 1
+        else:
+            return 0
 
+    def engine_breaking(self):
+        if self.throttle_position == 0.02 and self.rpm > 1000:
+            return 1
+        else:
+            return 0
+
+    def linear_guess(self, min_value, max_value, percentage):
+        difference = max_value - min_value
+        return ((difference * percentage)/100) + min_value
+
+    def find_max_torque(self):
+        size = len(self.torque_array) - 1
+
+        if self.rpm <= 1000:
+            return self.torque_array[0][1]
+        elif self.rpm >= self.torque_array[size][0]:
+            return self.torque_array[size][1]
+
+        for line in range(size):
+            line_torque = self.torque_array[line][1]
+            line_rpm = self.torque_array[line][0]
+
+            next_line_torque = self.torque_array[line + 1][1]
+            next_line_rpm = self.torque_array[line + 1][0]
+
+            if self.rpm >= line_rpm and self.rpm < next_line_rpm:
+                actual_rpm_percentage = (self.rpm/next_line_rpm) * 100
+                return self.linear_guess(line_torque, next_line_torque, actual_rpm_percentage)
 
     #Engine's forces
     def traction(self):
@@ -66,7 +98,14 @@ class Car:
         engine_rotation_rate = self.velocity * 60 * self.gear_ratio[self.gear] * self.differential_ratio / (2 * math.pi * wheel_radius)
         self.rpm = engine_rotation_rate
 
-        self.auto_gear()
+        if self.automatic == True:
+            self.auto_gear()
+
+        if self.rev_limiter():
+            return 0
+
+        if self.engine_breaking():
+            return self.velocity * -50
 
         self.max_torque = self.find_max_torque()
         self.engine_torque = self.max_torque * self.throttle_position
@@ -104,11 +143,16 @@ class Car:
         self.acceleration = self.forces / self.mass
         self.velocity = self.velocity + (dt * self.acceleration)
 
+    def calculate_distance(self, dt):
+        self.distance += self.velocity * dt
+
+
     def update(self, dt):
         C_MOVE = 30
 
         self.calculate_forces()
         self.calculate_velocity(dt)
+        self.calculate_distance(dt)
 
         #self.y = self.y + -self.velocity * C_MOVE * dt
         self.road_increment = self.velocity * C_MOVE * dt
