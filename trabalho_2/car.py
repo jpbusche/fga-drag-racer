@@ -1,7 +1,7 @@
 import math
 
 class Car:
-    def __init__(self, actor, name, mass, x, y, max_rpm, automatic):
+    def __init__(self, actor, name, mass, x, y, max_rpm, automatic, throttle_position = 0):
         self.mass = mass
         self.name = name
         self.actor = actor
@@ -9,11 +9,12 @@ class Car:
 
         self.x = x
         self.y = y
+        self.id = "NoMoreBUGS"
 
         self.hp = 0
         self.max_hp = 0
         self.max_torque = 0
-        self.throttle_position = 0
+        self.throttle_position = throttle_position
 
         self.velocity = 0
         self.rpm = 1000
@@ -46,6 +47,7 @@ class Car:
         if self.gear == 1:
             return
 
+        #Lower Gear
         v_max_lg = 0.34 * 2 * math.pi *  self.max_rpm / (60 * self.gear_ratio[self.gear - 1] * self.differential_ratio)
 
         if self.velocity < v_max_lg and self.gear > 1:
@@ -56,7 +58,7 @@ class Car:
             return
 
     def rev_limiter(self):
-        if self.rpm >= self.max_rpm:
+        if self.rpm >= (self.max_rpm * 1.05):
             self.rpm -= 300
             return 1
         else:
@@ -98,8 +100,9 @@ class Car:
         engine_rotation_rate = self.velocity * 60 * self.gear_ratio[self.gear] * self.differential_ratio / (2 * math.pi * wheel_radius)
         self.rpm = engine_rotation_rate
 
-        if self.automatic == True:
+        if self.automatic:
             self.auto_gear()
+
 
         if self.rev_limiter():
             return 0
