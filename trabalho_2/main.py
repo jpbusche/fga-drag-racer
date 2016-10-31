@@ -134,11 +134,11 @@ def show_stats(car_object, other):
         rect_end_distance = Rect((430, 130), (2, rect_height))
         rect_end_rpm = Rect((430, 70), (2, rect_height))
 
-        screen.draw.rect(rect_rpm, rpm_color)
-        screen.draw.rect(rect_player_distance, BLACK)
-        screen.draw.rect(rect_other_distance, RED)
-        screen.draw.rect(rect_end_distance, BLACK)
-        screen.draw.rect(rect_end_rpm, BLACK)
+        screen.draw.filled_rect(rect_rpm, rpm_color)
+        screen.draw.filled_rect(rect_other_distance, RED)
+        screen.draw.filled_rect(rect_player_distance, BLACK)
+        screen.draw.filled_rect(rect_end_distance, BLACK)
+        screen.draw.filled_rect(rect_end_rpm, BLACK)
 
 def set_acceleration(car_object):
     if keyboard.space:
