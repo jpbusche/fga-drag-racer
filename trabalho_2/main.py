@@ -118,7 +118,8 @@ def show_stats(car_object, other):
     RED = 200, 0, 0
     GREEN = 0, 200, 0
     BLACK = 0, 0, 0
-    BLUE = 0, 0, 200
+    COLOR_PLAYER = 190, 4, 17
+    COLOR_OTHER = 184, 90, 10 
 
     rpm_color = GREEN if car_object.rpm < car_object.max_rpm else RED
 
@@ -135,8 +136,8 @@ def show_stats(car_object, other):
         rect_end_rpm = Rect((430, 70), (2, rect_height))
 
         screen.draw.filled_rect(rect_rpm, rpm_color)
-        screen.draw.filled_rect(rect_other_distance, RED)
-        screen.draw.filled_rect(rect_player_distance, BLACK)
+        screen.draw.filled_rect(rect_other_distance, COLOR_OTHER)
+        screen.draw.filled_rect(rect_player_distance, COLOR_PLAYER)
         screen.draw.filled_rect(rect_end_distance, BLACK)
         screen.draw.filled_rect(rect_end_rpm, BLACK)
 
