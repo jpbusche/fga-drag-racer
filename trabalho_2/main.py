@@ -25,11 +25,11 @@ def on_mouse_down(pos, button):
         world.remove(bk_pause)
         world.remove(bt_sair)
         world.remove(bt_voltar)
-    elif button == mouse.LEFT and bt_denovo.actor.collidepoint(pos):
+    elif button == mouse.LEFT and bt_again.actor.collidepoint(pos):
         world.paused = False
         world.drawed_pause = False
         world.remove(bt_sair)
-        world.remove(bt_denovo)
+        world.remove(bt_again)
 
         if world.game_won:
             world.remove(bk_win)
@@ -73,13 +73,13 @@ def move_other(player, other):
     # "30" defined in Car Class as C_MOVE
     other.y = 500 + ((player.distance - other.distance) * 30)
 
-def check_win(player, other, max_distance):
+def check_win(player, other):
     if world.game_won or world.game_lost:
         return 0
-    if player.distance >= max_distance:
+    if player.distance >= world.max_distance:
         world.game_won = 1
         return 1
-    elif other.distance >= max_distance:
+    elif other.distance >= world.max_distance:
         world.game_lost = 1
         return -1
 
@@ -95,7 +95,7 @@ def win_menu():
     if not world.drawed_pause:
         world.add(bk_win)
         world.add(bt_sair)
-        world.add(bt_denovo)
+        world.add(bt_again)
         world.draw()
         world.drawed_pause = True
 
@@ -103,24 +103,42 @@ def lose_menu():
     if not world.drawed_pause:
         world.add(bk_lose)
         world.add(bt_sair)
-        world.add(bt_denovo)
+        world.add(bt_again)
         world.draw()
         world.drawed_pause = True
 
-def show_stats(car_object):
-    if not world.paused:
-        #screen.draw.text("Velocity (m/s): " + str(car_object.velocity), (30, 30), color="black")
-        screen.draw.text("Velocity (Km/h): " + str(car_object.velocity * 3.6), (30, 50), color="black")
-        screen.draw.text("RPM: " + str(car_object.rpm), (30, 70), color="black")
-        screen.draw.text("Gear: " + str(car_object.gear), (30, 90), color="black")
-        screen.draw.text("Forces (N): " + str(car_object.forces), (30, 110), color="black")
-        #screen.draw.text("Torque (kgf.m): " + str(car_object.max_torque * 0.138255), (30, 130), color="black")
-        screen.draw.text("Distance Difference (m): " + str(car_object.distance - car_other.distance), (30, 130), color="black")
-        screen.draw.text("Distance (m): " + str(car_object.distance), (30, 150), color="black")
+def show_stats(car_object, other):
+    rect_max_width = 410
+    rect_height = 30
 
-        print("Other Velocity: " + str(car_other.velocity * 3.6))
-        print("Other Distance " + str(car_other.distance))
-        print("Other Gear: " + str(car_other.gear) + "\n")
+    rect_rpm_width = (car_object.rpm * rect_max_width) / (car_object.max_rpm * 1.05)
+    rect_other_width = (other.distance * rect_max_width) / world.max_distance
+    rect_player_width = (car_object.distance * rect_max_width) / world.max_distance
+
+    RED = 200, 0, 0
+    GREEN = 0, 200, 0
+    BLACK = 0, 0, 0
+    BLUE = 0, 0, 200
+
+    rpm_color = GREEN if car_object.rpm < car_object.max_rpm else RED
+
+    if not world.paused:
+        screen.draw.text("Velocity (Km/h): " + str("%.0f" % (car_object.velocity * 3.6)), (20, 10), color="black")
+        screen.draw.text("Gear: " + str(car_object.gear), (20, 30), color="black")
+        screen.draw.text("RPM: " + str("%.0f" %  car_object.rpm), (20, 50), color="black")
+        screen.draw.text("Distance (m): " + str("%.0f" %  car_object.distance), (20, 110), color="black")
+
+        rect_rpm = Rect((20, 70), (rect_rpm_width, rect_height))
+        rect_player_distance = Rect((20, 130), (rect_player_width, rect_height))
+        rect_other_distance = Rect((20, 130), (rect_other_width, rect_height))
+        rect_end_distance = Rect((430, 130), (2, rect_height))
+        rect_end_rpm = Rect((430, 70), (2, rect_height))
+
+        screen.draw.rect(rect_rpm, rpm_color)
+        screen.draw.rect(rect_player_distance, BLACK)
+        screen.draw.rect(rect_other_distance, RED)
+        screen.draw.rect(rect_end_distance, BLACK)
+        screen.draw.rect(rect_end_rpm, BLACK)
 
 def set_acceleration(car_object):
     if keyboard.space:
@@ -139,11 +157,11 @@ def check_brake(car_object):
 
 def draw():
     world.draw()
-    show_stats(car_player)
+    show_stats(car_player, car_other)
 
 def update(dt):
-    # Here you can define the win distance - Default: 1000m
-    win_status = check_win(car_player, car_other, 50)
+    # Here you can define the win distance - Default: 1000m in World Class
+    win_status = check_win(car_player, car_other)
 
     if win_status == 1:
         world.paused = True
@@ -159,8 +177,6 @@ def update(dt):
         move_other(car_player, car_other)
         move_road(bk_1, bk_2, car_player)
         world.update(dt)
-
-        check_win(car_player, car_other, 1000)
     elif world.paused:
         pause_menu()
 
@@ -180,7 +196,7 @@ bt_sair = Background(Actor('bt_sair', anchor=('left', 'top')), 63.4, 490, "bt_sa
 bk_pause = Background(Actor('pause_bk', anchor=('left', 'top')), 0, 0, "bk_pause")
 
 #For Win or Lose
-bt_denovo = Background(Actor('bt_denovo', anchor=('left', 'top')), 63.4, 375, "bt_denovo")
+bt_again = Background(Actor('bt_again', anchor=('left', 'top')), 63.4, 375, "bt_again")
 bk_win = Background(Actor('win_bk', anchor=('left', 'top')), 0, 0, "bk_win")
 bk_lose = Background(Actor('lose_bk', anchor=('left', 'top')), 0, 0, "bk_lose")
 

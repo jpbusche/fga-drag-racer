@@ -34,3 +34,7 @@ Alpha v1.0.4 - 30/10/2016
 - NEW: Pause menu (Press P to enter)
 - FIXED: Rev limiter causing automatic gear to stuck
 - CHANGED: Game Sprites
+
+Alpha v1.0.5 - 31/10/2016
+- CHANGED: Player stats (UI)
+- FIXED: You could not win if max_distance was greater than 1000m
