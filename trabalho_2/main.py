@@ -5,7 +5,7 @@ import sys; sys.path.append('.')
 from car import *
 from world import *
 from background import *
-#import pygame
+import pygame
 
 WIDTH = 450
 HEIGHT = 800
