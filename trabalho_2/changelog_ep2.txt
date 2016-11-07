@@ -38,3 +38,6 @@ Alpha v1.0.4 - 30/10/2016
 Alpha v1.0.5 - 31/10/2016
 - CHANGED: Player stats (UI)
 - FIXED: You could not win if max_distance was greater than 1000m
+
+Alpha v1.0.6 - 03/11/2016
+- CHANGED: 2 distance bars

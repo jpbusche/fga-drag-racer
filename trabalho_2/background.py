@@ -1,4 +1,4 @@
-class Background:
+class Image:
     def __init__(self, actor, x, y, identificator):
         self.actor = actor
         self.x = x

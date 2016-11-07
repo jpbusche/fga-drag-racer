@@ -27,7 +27,7 @@ class Car:
 
         self.differential_ratio = 3.42
         self.torque_array = [[1000, 390], [2000, 440], [3000, 455], [4000, 470],
-        [4400, 475], [5000, 460], [5500, 390]]
+        [4400, 475], [5000, 460], [5500, 400], [6000, 390], [6500, 370]]
         self.gear_ratio = [0.0, 2.66, 1.78, 1.30, 1.0, 0.74, 0.50]
         self.gear = 1
 
@@ -149,7 +149,6 @@ class Car:
     def calculate_distance(self, dt):
         self.distance += self.velocity * dt
 
-
     def update(self, dt):
         C_MOVE = 30
 
@@ -160,9 +159,6 @@ class Car:
         #self.y = self.y + -self.velocity * C_MOVE * dt
         self.road_increment = self.velocity * C_MOVE * dt
 
-        #DEBUG
-        #self.print_stats()
-
     def draw(self):
         self.actor.y = self.y
         self.actor.x = self.x
@@ -171,13 +167,11 @@ class Car:
     def print_stats(self):
         print("----------------------------------")
         print("Name: " + self.name)
-        print("X Position: " + str(self.x))
-        print("Y Position: " + str(self.y))
-        print("Velocity: " + str(self.velocity))
+        print("Distance Traveled (m):" + str(self.distance))
+        print("Velocity (m/s): " + str(self.velocity))
         print("RPM: " + str(self.rpm))
         print("Gear: " + str(self.gear))
-        print("Forces: " + str(self.forces))
+        print("Forces (N): " + str(self.forces))
         print("HP: " + str(self.hp))
-        print("Max HP: " + str(self.max_hp))
-        print("Max torque: " + str(self.max_torque))
+        print("Max torque (lb-Nm): " + str(self.max_torque))
         print("----------------------------------\n")
