@@ -1,0 +1,5 @@
+Alpha v1.1.0:
+- ADDED: Now cars can be loaded from json file
+- CHANGED: GitHub folder organization
+- CHANGED: Car data
+- CHANGED: Code optimization (Kind of)
