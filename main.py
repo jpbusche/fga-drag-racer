@@ -7,19 +7,25 @@ from world import *
 from background import *
 from ui_elements import *
 from menu import *
+from main_menu import *
 from car_parser import *
+from time_slip import *
 import pygame
 
 WIDTH = 450
 HEIGHT = 800
-PLAYER_MODEL = "Gamavette"
-OTHER_MODEL = "Enemy_Default"
 
 def on_mouse_down(pos, button):
-    if button == mouse.LEFT and bt_sair.actor.collidepoint(pos):
+    #Quit Game button - In Main Menu (**_mm) and Pause Menu
+    if button == mouse.LEFT and (bt_sair.actor.collidepoint(pos) or \
+    bt_sair_mm.actor.collidepoint(pos)):
         quit_game()
+
+    #Back button
     elif button == mouse.LEFT and bt_voltar.actor.collidepoint(pos):
         pause_menu.destroy(world)
+
+    #Play Again button
     elif button == mouse.LEFT and bt_again.actor.collidepoint(pos):
         if world.game_won:
             win_menu.destroy(world)
@@ -28,19 +34,38 @@ def on_mouse_down(pos, button):
 
         reset_game()
 
+    #Select player's car
+    elif button == mouse.LEFT and bt_next_player.actor.collidepoint(pos):
+        main_menu.next_car("player")
+    elif button == mouse.LEFT and bt_prev_player.actor.collidepoint(pos):
+        main_menu.prev_car("player")
+
+    #Select other's car
+    elif button == mouse.LEFT and bt_next_other.actor.collidepoint(pos):
+        main_menu.next_car("other")
+    elif button == mouse.LEFT and bt_prev_other.actor.collidepoint(pos):
+        main_menu.prev_car("other")
+
+    #Play Button
+    elif button == mouse.LEFT and bt_play.actor.collidepoint(pos):
+        main_menu.in_menu = False
+        main_menu.destroy(world)
+        reset_game()
+
 def on_key_down(key):
-    if key == keys.UP and car_player.gear < 6:
+    if key == keys.UP and car_player.gear < car_player.total_gears:
         car_player.gear += 1
-        print("Upshift")
     elif key == keys.DOWN and car_player.gear > 1:
         car_player.gear -= 1
-        print("Downshift")
     elif key == keys.P:
         if not world.paused:
             world.paused = True
     elif key == keys.R:
         #For Debug or cheating
         reset_game()
+    elif key == keys.M and not world.paused:
+        screen.clear()
+        main_menu.in_menu = True
 
 def reset_game():
     global car_player, car_other
@@ -50,32 +75,19 @@ def reset_game():
     world.remove(car_player)
     world.remove(car_other)
 
-    car_player = get_car(car_array, PLAYER_MODEL, 330, 500, False)
-    car_other = get_car(car_array, OTHER_MODEL, 130, 500, True, 1)
+    car_player = get_car(car_array, main_menu.player, 330, 500, False)
+    car_other = get_car(car_array, main_menu.other, 130, 500, True, 1)
 
     world.add(car_player)
     world.add(car_other)
 
-def move_road(back_1, back_2, player):
-    back_increment = int(player.road_increment)
-
-    if back_1.y > 800:
-        back_1.y = -(800 - back_2.y)
-    if back_2.y > 800:
-        back_2.y = -(800 - back_1.y)
-
-    back_1.y = back_1.y + back_increment
-    back_2.y = back_2.y + back_increment
-
 def move_other(player, other):
-    # "30" defined in Car Class as C_MOVE
-    other.y = 500 + ((player.distance - other.distance) * 30)
+    # "50" defined in Car Class as C_MOVE
+    other.y = 500 + ((player.distance - other.distance) * 50)
 
 def assign_actors(car_array):
     for car in car_array:
         image = car['actor']
-        print(image)
-
         car['actor'] = Actor(image, anchor=('middle', 'top'))
 
 def check_win(player, other):
@@ -99,7 +111,7 @@ def show_stats(car_object, other):
     rpm_color = GREEN if car_object.rpm < car_object.max_rpm else RED
 
     if not world.paused:
-        draw_basic_info(car_object, screen)
+        draw_basic_info(car_object, other, screen)
 
         rect_rpm = Rect((20, 70), (sizes['rect_rpm_width'], sizes['rect_height']))
         rect_player_distance = Rect((20, 130), (sizes['rect_player_width'], 12.5))
@@ -119,6 +131,7 @@ def show_stats(car_object, other):
 
 def set_acceleration(car_object):
     if keyboard.space:
+        car_object.t_slip.set_reaction()
         car_object.throttle_position = 1
     else:
         car_object.throttle_position = 0.02
@@ -141,18 +154,25 @@ def load_cars():
 
 def draw():
     world.draw()
-    show_stats(car_player, car_other)
+
+    if not main_menu.in_menu:
+        show_stats(car_player, car_other)
+    else:
+        main_menu.show_names(screen)
 
 def update(dt):
+    if main_menu.in_menu:
+        main_menu.show(world)
+
     # You can define the max distance in world.py - Default: 1000m
     win_status = check_win(car_player, car_other)
 
     if win_status == 1:
-        world.paused = True
         win_menu.show(world)
+        car_player.print_time_slip(world)
     elif win_status == -1:
-        world.paused = True
         lose_menu.show(world)
+        car_player.print_time_slip(world)
 
     if not world.paused:
         screen.clear()
@@ -161,9 +181,12 @@ def update(dt):
         move_other(car_player, car_other)
         move_road(bk_1, bk_2, car_player)
         world.update(dt)
+
+        #car_other.print_stats()
         car_player.print_stats()
     elif world.paused:
-        pause_menu.show(world)
+        if not main_menu.in_menu:
+            pause_menu.show(world)
 
 # Starting pygamezero simulation
 world = World()
@@ -171,33 +194,46 @@ world = World()
 #Loading car files
 car_array = load_cars()
 
-# Creates the first cars references
-car_player = get_car(car_array, PLAYER_MODEL, 330, 500, False)
-car_other = get_car(car_array, OTHER_MODEL, 130, 500, True, 1)
 
 # Defines the 2 backgrounds
 bk_1 = Image(Actor('road', anchor=('left', 'top')), 0, 0, "bk_1")
 bk_2 = Image(Actor('road', anchor=('left', 'top')), 0, -800, "bk_2")
 
 #For pause_menu
-bt_voltar = Image(Actor('bt_voltar', anchor=('left', 'top')), 63.4, 375, "bt_voltar")
-bt_sair = Image(Actor('bt_sair', anchor=('left', 'top')), 63.4, 490, "bt_sair")
+bt_voltar = Image(Actor('bt_voltar', anchor=('left', 'top')), 64, 375, "bt_voltar")
+bt_sair = Image(Actor('bt_sair', anchor=('left', 'top')), 64, 490, "bt_sair")
 bk_pause = Image(Actor('pause_bk', anchor=('left', 'top')), 0, 0, "bk_pause")
 
 #For Win or Lose
-bt_again = Image(Actor('bt_again', anchor=('left', 'top')), 63.4, 375, "bt_again")
+bt_again = Image(Actor('bt_again', anchor=('left', 'top')), 64, 375, "bt_again")
 bk_win = Image(Actor('win_bk', anchor=('left', 'top')), 0, 0, "bk_win")
 bk_lose = Image(Actor('lose_bk', anchor=('left', 'top')), 0, 0, "bk_lose")
 
-# Create lists for the itens
+#For Main Menu
+bt_next_player = Image(Actor('bt_next', anchor=('left', 'top')), 339, 323, "bt_next_player")
+bt_next_other = Image(Actor('bt_next', anchor=('left', 'top')), 339, 385, "bt_next_other")
+bt_prev_player = Image(Actor('bt_prev', anchor=('left', 'top')), 64, 323, "bt_prev_player")
+bt_prev_other = Image(Actor('bt_prev', anchor=('left', 'top')), 64, 385, "bt_prev_other")
+bt_play = Image(Actor('bt_play', anchor=('left', 'top')), 64, 493, "bt_play")
+bt_sair_mm = Image(Actor('bt_sair', anchor=('left', 'top')), 64, 596, "bt_sair_mm")
+
+# Create lists for the itens - Menus
 pause_actors = [bk_pause, bt_voltar, bt_sair]
 lose_actors = [bk_lose, bt_again, bt_sair]
 win_actors = [bk_win, bt_again, bt_sair]
+main_actors = [bk_pause, bt_prev_player, bt_next_player, bt_prev_other, \
+    bt_next_other, bt_play, bt_sair_mm]
 
 # Create object for each menu
 pause_menu = Menu(pause_actors)
 lose_menu = Menu(lose_actors)
 win_menu = Menu(win_actors)
+main_menu = Main_menu(main_actors, car_array)
+
+
+# Creates the first cars references
+car_player = get_car(car_array, main_menu.player, 330, 500, False)
+car_other = get_car(car_array, main_menu.other, 130, 500, True, 1)
 
 # Add objects to World
 world.add(bk_1)

@@ -1,5 +1,5 @@
 class World:
-    def __init__(self, objects=[], paused = False, drawed_pause = False, game_won = False, game_lost = False, max_distance = 1000):
+    def __init__(self, objects=[], paused = False, drawed_pause = False, game_won = False, game_lost = False, max_distance = 500):
         self.objects = list(objects)
         self.max_distance = max_distance
         self.paused = paused

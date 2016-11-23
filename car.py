@@ -1,8 +1,12 @@
 import math
+from time_slip import *
 
 class Car:
     def __init__(self, actor, name, mass, differential_ratio, torque_array, \
-        gear_ratio, max_rpm, x = 0, y = 0,automatic = False, throttle_position = 0):
+        gear_ratio, max_rpm, x = 0, y = 0,automatic = False, \
+        throttle_position = 0, idle_rpm = 1000, wheel_radius = 15, \
+        total_gears = 6):
+
         self.mass = mass
         self.name = name
         self.actor = actor
@@ -12,35 +16,43 @@ class Car:
         self.y = y
         self.id = "NoMoreBUGS"
 
+        self.t_slip = Time_slip()
+
         self.hp = 0
         self.max_hp = 0
         self.max_torque = 0
         self.throttle_position = throttle_position
 
         self.velocity = 0
-        self.rpm = 1000
+        self.idle_rpm = idle_rpm
         self.max_rpm = max_rpm
         self.engine_torque = 0
         self.crankshaft_torque = 0
         self.acceleration = 0
         self.distance = 0
         self.forces = 0
-        
+
         self.differential_ratio = differential_ratio
         self.torque_array = torque_array
         self.gear_ratio = gear_ratio
         self.gear = 1
+        self.total_gears = total_gears
 
         self.C_BRAKE = 9000
         self.breaking = False
 
+        # Inches to m
+        self.wheel_radius = wheel_radius / 39.370
+
         self.road_increment = 0
 
-    def auto_gear(self):
-        change_gear_rpm = self.max_rpm
-        v_max = 0.34 * 2 * math.pi *  self.max_rpm / (60 * self.gear_ratio[self.gear] * self.differential_ratio)
+        self.initial_velocity()
 
-        if self.velocity >= v_max and self.gear < 6:
+    def auto_gear(self):
+        v_max = self.wheel_radius * 2 * math.pi *  self.max_rpm / \
+            (60 * self.gear_ratio[self.gear] * self.differential_ratio)
+
+        if self.velocity >= v_max and self.gear < self.total_gears:
             self.gear += 1
             return
 
@@ -48,7 +60,8 @@ class Car:
             return
 
         #Lower Gear
-        v_max_lg = 0.34 * 2 * math.pi *  self.max_rpm / (60 * self.gear_ratio[self.gear - 1] * self.differential_ratio)
+        v_max_lg = self.wheel_radius * 2 * math.pi *  self.max_rpm / \
+            (60 * self.gear_ratio[self.gear - 1] * self.differential_ratio)
 
         if self.velocity < v_max_lg and self.gear > 1:
             self.gear -= 1
@@ -77,7 +90,7 @@ class Car:
     def find_max_torque(self):
         size = len(self.torque_array) - 1
 
-        if self.rpm <= 1000:
+        if self.rpm <= self.torque_array[0][0]:
             return self.torque_array[0][1]
         elif self.rpm >= self.torque_array[size][0]:
             return self.torque_array[size][1]
@@ -95,14 +108,11 @@ class Car:
 
     #Engine's forces
     def traction(self):
-        wheel_radius = 0.33
-
-        engine_rotation_rate = self.velocity * 60 * self.gear_ratio[self.gear] * self.differential_ratio / (2 * math.pi * wheel_radius)
-        self.rpm = engine_rotation_rate
+        self.rpm = self.velocity * 60 * self.gear_ratio[self.gear] * \
+            self.differential_ratio / (2 * math.pi * self.wheel_radius)
 
         if self.automatic:
             self.auto_gear()
-
 
         if self.rev_limiter():
             return 0
@@ -112,16 +122,16 @@ class Car:
 
         self.max_torque = self.find_max_torque()
         self.engine_torque = self.max_torque * self.throttle_position
+        #torque_wheel = self.engine_torque * self.gear_ratio[self.gear] * self.differential_ratio
 
         # Foot-pounds to N.m
-        self.hp = (self.engine_torque * self.rpm / 5252) * 1.335
-        self.crankshaft_torque = (self.gear_ratio[self.gear] * self.differential_ratio) * 0.7
+        self.hp = ((self.engine_torque * 0.737) * self.rpm / 5252)
+        self.crankshaft_torque = (self.gear_ratio[self.gear] * self.differential_ratio)
 
         #FDrive = Torque at 'x' rpm * self.gear_ratio * differential_ratio
         # * transmission_efficiency * wheel_radius
-        # Wheel = 13.4 inches
-        # Transmission efficiency - It's a guess
-        return self.engine_torque * self.crankshaft_torque / 0.34
+        # Transmission efficiency - It's a guess - 0.7 (range 0-1)
+        return self.engine_torque * self.crankshaft_torque / self.wheel_radius * 0.7
 
     def breaking_force(self):
         return -1 * (self.C_BRAKE)
@@ -134,13 +144,13 @@ class Car:
         f_rr = -C_RR * self.velocity
 
         #Calculates the car's traction based on its configuration
-        if self.breaking == True:
+        if self.breaking:
             f_traction = self.breaking_force()
         else:
             f_traction = self.traction()
 
         #Update car's forces
-        self.forces = f_traction + f_rr + f_drag
+        self.forces =  f_traction  + f_rr + f_drag
 
     def calculate_velocity(self, dt):
         self.acceleration = self.forces / self.mass
@@ -149,12 +159,18 @@ class Car:
     def calculate_distance(self, dt):
         self.distance += self.velocity * dt
 
+    def initial_velocity(self):
+        self.velocity = self.wheel_radius * (2 * math.pi) *  self.idle_rpm / \
+            (60 * self.gear_ratio[self.gear] * self.differential_ratio)
+
     def update(self, dt):
-        C_MOVE = 30
+        C_MOVE = 50
 
         self.calculate_forces()
         self.calculate_velocity(dt)
         self.calculate_distance(dt)
+
+        self.t_slip.update_times(self)
 
         #self.y = self.y + -self.velocity * C_MOVE * dt
         self.road_increment = self.velocity * C_MOVE * dt
@@ -172,6 +188,9 @@ class Car:
         print("RPM: " + str(self.rpm))
         print("Gear: " + str(self.gear))
         print("Forces (N): " + str(self.forces))
-        print("HP: " + str(self.hp))
-        print("Max torque (lb-Nm): " + str(self.max_torque))
+        print("cv: " + str(self.hp * 1.013))
+        print("Max torque (Nm): " + str(self.max_torque))
         print("----------------------------------\n")
+
+    def print_time_slip(self, world):
+        self.t_slip.print_slip(self)

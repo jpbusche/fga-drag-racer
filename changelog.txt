@@ -3,3 +3,15 @@ Alpha v1.1.0:
 - CHANGED: GitHub folder organization
 - CHANGED: Car data
 - CHANGED: Code optimization (Kind of)
+
+Alpha v1.1.1:
+- ADDED: Now cars have an initial velocity (Idle RPM)
+- ADDED: Now there's a Main Menu where you can select the cars
+    * Press M while in-game
+    * Initial menu
+- ADDED: Time Slips
+- CHANGED: Now cars have an wheel_radius and max gear
+- CHANGED: New cars
+- CHANGED: Some corrections on car's functions
+- CHANGED: C_MOVE was increased to 50
+- FIXED: Car's torque unit (Lb-ft to Nm)

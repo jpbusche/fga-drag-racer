@@ -4,32 +4,35 @@
     "name": "Gamavette",
     "actor": "car_player",
     "mass": 1414.3,
+    "idle_rpm": 950,
+    "total_gears": 6,
+    "wheel_radius": 17,
     "max_rpm": 6800,
     "differential_ratio": 3.42,
     "torque_array": [
       [
         1000,
-        100
+        162.698
       ],
       [
         2500,
-        150
+        203.37
       ],
       [
         5000,
-        310
+        420.303
       ],
       [
         5250,
-        315
+        428
       ],
       [
         6000,
-        300
+        406.745
       ],
       [
         6500,
-        220
+        296.28
       ]
     ],
     "gear_ratio": [
@@ -44,35 +47,38 @@
   },
   {
     "__type__": "Car",
-    "name": "Enemy_Default",
+    "name": "Enemyvette",
     "actor": "car_ai",
     "mass": 1500,
+    "idle_rpm": 950,
+    "total_gears": 6,
+    "wheel_radius": 17,
     "max_rpm": 6800,
     "differential_ratio": 3.42,
     "torque_array": [
       [
         1000,
-        100
+        162.698
       ],
       [
         2500,
-        150
+        203.37
       ],
       [
         5000,
-        310
+        420.303
       ],
       [
         5250,
-        315
+        428
       ],
       [
         6000,
-        300
+        406.745
       ],
       [
         6500,
-        220
+        296.28
       ]
     ],
     "gear_ratio": [
@@ -90,28 +96,31 @@
     "name": "Down",
     "actor": "car_ai",
     "mass": 1000,
+    "idle_rpm": 950,
+    "total_gears": 5,
+    "wheel_radius": 15,
     "max_rpm": 6000,
     "differential_ratio": 3.625,
     "torque_array": [
       [
         1000,
-        66.380
+        90
       ],
       [
         2000,
-        121.697
+        165
       ],
       [
         4100,
-        110.634
+        150
       ],
       [
         5000,
-        103.258
+        140
       ],
       [
         6000,
-        88.507
+        120
       ]
     ],
     "gear_ratio": [
@@ -121,6 +130,138 @@
       1.281,
       0.927,
       0.740
+    ]
+  },
+  {
+    "__type__": "Car",
+    "name": "Dos",
+    "actor": "car_ai",
+    "mass": 1017,
+    "idle_rpm": 950,
+    "total_gears": 5,
+    "wheel_radius": 15,
+    "max_rpm": 6500,
+    "differential_ratio": 4.357,
+    "torque_array": [
+      [
+        1500,
+        98
+      ],
+      [
+        2000,
+        113
+      ],
+      [
+        3500,
+        122.5
+      ],
+      [
+        5000,
+        117.5
+      ],
+      [
+        6000,
+        98
+      ]
+    ],
+    "gear_ratio": [
+      0,
+      4.273,
+      2.238,
+      1.444,
+      1.029,
+      0.872
+    ]
+  },
+  {
+    "__type__": "Car",
+    "name": "Down",
+    "actor": "car_ai",
+    "mass": 1000,
+    "idle_rpm": 950,
+    "total_gears": 5,
+    "wheel_radius": 15,
+    "max_rpm": 6000,
+    "differential_ratio": 3.625,
+    "torque_array": [
+      [
+        1000,
+        90
+      ],
+      [
+        2000,
+        165
+      ],
+      [
+        4100,
+        150
+      ],
+      [
+        5000,
+        140
+      ],
+      [
+        6000,
+        120
+      ]
+    ],
+    "gear_ratio": [
+      0,
+      3.769,
+      2.095,
+      1.281,
+      0.927,
+      0.740
+    ]
+  },
+  {
+    "__type__": "Car",
+    "name": "Dos Firma",
+    "actor": "car_ai",
+    "mass": 750,
+    "idle_rpm": 700,
+    "total_gears": 6,
+    "wheel_radius": 18,
+    "max_rpm": 8600,
+    "differential_ratio": 6.20,
+    "torque_array": [
+      [
+        1500,
+        98
+      ],
+      [
+        2500,
+        338.954
+      ],
+      [
+        3500,
+        372.849
+      ],
+      [
+        5000,
+        440.640
+      ],
+      [
+        6500,
+        800
+      ],
+      [
+        7000,
+        440
+      ],
+      [
+        8000,
+        340
+      ]
+    ],
+    "gear_ratio": [
+      0,
+      3.20,
+      1.87,
+      1.36,
+      1.07,
+      0.90,
+      0.75
     ]
   }
 ]
