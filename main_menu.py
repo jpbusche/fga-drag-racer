@@ -1,8 +1,9 @@
-from menu import *
+from menu import Menu
 from car_parser import get_names
 
-class Main_menu(Menu):
+class MainMenu(Menu):
     def __init__(self, actors, cars):
+        Menu.__init__(self, actors)
         self.actors = actors
         self.cars = get_names(cars)
         self.cars_len = len(cars)
@@ -34,5 +35,5 @@ class Main_menu(Menu):
             self.other_index = new_index
 
     def show_names(self, screen):
-        screen.draw.text(self.player, centerx=225, top= 338, color="black")
-        screen.draw.text(self.other, centerx=225, top = 400, color="black")
+        screen.draw.text(self.player, centerx=225, top=338, color="black")
+        screen.draw.text(self.other, centerx=225, top=400, color="black")

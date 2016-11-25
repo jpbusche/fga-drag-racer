@@ -15,3 +15,7 @@ Alpha v1.1.1:
 - CHANGED: Some corrections on car's functions
 - CHANGED: C_MOVE was increased to 50
 - FIXED: Car's torque unit (Lb-ft to Nm)
+
+Alpha v1.1.1 - Minor:
+- CHANGED: Used Pylint for some code analysis
+- FIXED: Reset game while in pause

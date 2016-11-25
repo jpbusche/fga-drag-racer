@@ -57,11 +57,9 @@ def on_key_down(key):
         car_player.gear += 1
     elif key == keys.DOWN and car_player.gear > 1:
         car_player.gear -= 1
-    elif key == keys.P:
-        if not world.paused:
+    elif key == keys.P and not world.paused:
             world.paused = True
-    elif key == keys.R:
-        #For Debug or cheating
+    elif key == keys.R and not world.paused:
         reset_game()
     elif key == keys.M and not world.paused:
         screen.clear()
@@ -169,10 +167,10 @@ def update(dt):
 
     if win_status == 1:
         win_menu.show(world)
-        car_player.print_time_slip(world)
+        car_player.print_time_slip()
     elif win_status == -1:
         lose_menu.show(world)
-        car_player.print_time_slip(world)
+        car_player.print_time_slip()
 
     if not world.paused:
         screen.clear()
@@ -228,7 +226,7 @@ main_actors = [bk_pause, bt_prev_player, bt_next_player, bt_prev_other, \
 pause_menu = Menu(pause_actors)
 lose_menu = Menu(lose_actors)
 win_menu = Menu(win_actors)
-main_menu = Main_menu(main_actors, car_array)
+main_menu = MainMenu(main_actors, car_array)
 
 
 # Creates the first cars references

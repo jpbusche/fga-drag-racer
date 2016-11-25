@@ -1,11 +1,11 @@
-class World:
-    def __init__(self, objects=[], paused = False, drawed_pause = False, game_won = False, game_lost = False, max_distance = 500):
+class World(object):
+    def __init__(self, objects=[], max_distance=500):
         self.objects = list(objects)
         self.max_distance = max_distance
-        self.paused = paused
-        self.drawed_pause = drawed_pause
-        self.game_won = game_won
-        self.game_lost = game_lost
+        self.paused = False
+        self.drawed_pause = False
+        self.game_won = False
+        self.game_lost = False
 
     def update(self, dt):
         for obj in self.objects:

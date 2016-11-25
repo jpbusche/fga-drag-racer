@@ -1,8 +1,8 @@
-class Image:
-    def __init__(self, actor, x, y, identificator):
+class Image(object):
+    def __init__(self, actor, x_pos, y_pos, identificator):
         self.actor = actor
-        self.x = x
-        self.y = y
+        self.x = x_pos
+        self.y = y_pos
         self.id = identificator
 
     def __eq__(self, other):

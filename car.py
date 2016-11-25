@@ -1,11 +1,11 @@
 import math
-from time_slip import *
+from time_slip import TimeSlip
 
-class Car:
+class Car(object):
     def __init__(self, actor, name, mass, differential_ratio, torque_array, \
-        gear_ratio, max_rpm, x = 0, y = 0,automatic = False, \
-        throttle_position = 0, idle_rpm = 1000, wheel_radius = 15, \
-        total_gears = 6):
+        gear_ratio, max_rpm, x=0, y=0, automatic=False, \
+        throttle_position=0, idle_rpm=1000, wheel_radius=15, \
+        total_gears=6):
 
         self.mass = mass
         self.name = name
@@ -16,7 +16,7 @@ class Car:
         self.y = y
         self.id = "NoMoreBUGS"
 
-        self.t_slip = Time_slip()
+        self.t_slip = TimeSlip()
 
         self.hp = 0
         self.max_hp = 0
@@ -25,6 +25,7 @@ class Car:
 
         self.velocity = 0
         self.idle_rpm = idle_rpm
+        self.rpm = 0
         self.max_rpm = max_rpm
         self.engine_torque = 0
         self.crankshaft_torque = 0
@@ -83,10 +84,6 @@ class Car:
         else:
             return 0
 
-    def linear_guess(self, min_value, max_value, percentage):
-        difference = max_value - min_value
-        return ((difference * percentage)/100) + min_value
-
     def find_max_torque(self):
         size = len(self.torque_array) - 1
 
@@ -104,7 +101,7 @@ class Car:
 
             if self.rpm >= line_rpm and self.rpm < next_line_rpm:
                 actual_rpm_percentage = (self.rpm/next_line_rpm) * 100
-                return self.linear_guess(line_torque, next_line_torque, actual_rpm_percentage)
+                return linear_guess(line_torque, next_line_torque, actual_rpm_percentage)
 
     #Engine's forces
     def traction(self):
@@ -150,7 +147,7 @@ class Car:
             f_traction = self.traction()
 
         #Update car's forces
-        self.forces =  f_traction  + f_rr + f_drag
+        self.forces = f_traction  + f_rr + f_drag
 
     def calculate_velocity(self, dt):
         self.acceleration = self.forces / self.mass
@@ -192,5 +189,9 @@ class Car:
         print("Max torque (Nm): " + str(self.max_torque))
         print("----------------------------------\n")
 
-    def print_time_slip(self, world):
+    def print_time_slip(self):
         self.t_slip.print_slip(self)
+
+def linear_guess(min_value, max_value, percentage):
+    difference = max_value - min_value
+    return ((difference * percentage)/100) + min_value
