@@ -19,3 +19,9 @@ Alpha v1.1.1:
 Alpha v1.1.1 - Minor:
 - CHANGED: Used Pylint for some code analysis
 - FIXED: Reset game while in pause
+
+Alpha v1.1.2:
+- ADDED: Countdown to play
+- CHANGED: Now auto_gear shifts at 70% max rpm
+- CHANGED: Updated cars torque curve
+- CHANGED: New images

@@ -37,3 +37,12 @@ def move_road(back_1, back_2, player):
 def quit_game():
     pygame.display.quit()
     quit()
+
+def hello_message():
+    print("Welcome to FGA DRAG RACER!\n" +
+        "By: João Paulo Busche and Matheus de Oliveira\n" +
+        "Universidade de Brasília - Campus Gama - 2.2016 - Física para Jogos\n\n" +
+        "Follow us on GitHub:  https://github.com/jpbusche/fis-jogos\n" +
+        "------------------------------------------------------------------\n" +
+        "CONTROLS:\nSPACE - Throttle\nUP - Next Gear\nDOWN - Previous Gear" +
+        "\nP - Pause Menu\nM - Main Menu\nB - Break\nR - Secret Reset")

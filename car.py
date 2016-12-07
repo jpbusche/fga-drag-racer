@@ -50,8 +50,12 @@ class Car(object):
         self.initial_velocity()
 
     def auto_gear(self):
-        v_max = self.wheel_radius * 2 * math.pi *  self.max_rpm / \
-            (60 * self.gear_ratio[self.gear] * self.differential_ratio)
+        wheel_circumference = self.wheel_radius * 2 * math.pi
+        differential_turn = 60 * self.differential_ratio
+        rpm_percentage = self.max_rpm * 0.7
+
+        v_max = wheel_circumference *  rpm_percentage / \
+            (self.gear_ratio[self.gear] * differential_turn)
 
         if self.velocity >= v_max and self.gear < self.total_gears:
             self.gear += 1
@@ -61,8 +65,8 @@ class Car(object):
             return
 
         #Lower Gear
-        v_max_lg = self.wheel_radius * 2 * math.pi *  self.max_rpm / \
-            (60 * self.gear_ratio[self.gear - 1] * self.differential_ratio)
+        v_max_lg = wheel_circumference *  rpm_percentage / \
+            (self.gear_ratio[self.gear - 1] * differential_turn)
 
         if self.velocity < v_max_lg and self.gear > 1:
             self.gear -= 1

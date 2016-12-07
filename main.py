@@ -1,5 +1,6 @@
 # Workarround for importing in pygamezero
-import sys; sys.path.append('.')
+import sys
+sys.path.append('.')
 
 #from FGAme import *
 from car import *
@@ -10,6 +11,7 @@ from menu import *
 from main_menu import *
 from car_parser import *
 from time_slip import *
+from countdown import Countdown
 import pygame
 
 WIDTH = 450
@@ -31,8 +33,8 @@ def on_mouse_down(pos, button):
             win_menu.destroy(world)
         else:
             lose_menu.destroy(world)
-
-        reset_game()
+        screen.clear()
+        main_menu.in_menu = True
 
     #Select player's car
     elif button == mouse.LEFT and bt_next_player.actor.collidepoint(pos):
@@ -51,6 +53,7 @@ def on_mouse_down(pos, button):
         main_menu.in_menu = False
         main_menu.destroy(world)
         reset_game()
+        countdown_menu.start_countdown()
 
 def on_key_down(key):
     if key == keys.UP and car_player.gear < car_player.total_gears:
@@ -58,7 +61,7 @@ def on_key_down(key):
     elif key == keys.DOWN and car_player.gear > 1:
         car_player.gear -= 1
     elif key == keys.P and not world.paused:
-            world.paused = True
+        world.paused = True
     elif key == keys.R and not world.paused:
         reset_game()
     elif key == keys.M and not world.paused:
@@ -130,7 +133,7 @@ def show_stats(car_object, other):
 def set_acceleration(car_object):
     if keyboard.space:
         car_object.t_slip.set_reaction()
-        car_object.throttle_position = 1
+        car_object.throttle_position = 1.00
     else:
         car_object.throttle_position = 0.02
 
@@ -162,6 +165,12 @@ def update(dt):
     if main_menu.in_menu:
         main_menu.show(world)
 
+    if countdown_menu.in_countdown:
+        countdown_menu.show(world)
+    elif countdown_menu.check_finished():
+        countdown_menu.finish_countdown(world)
+        reset_game()
+
     # You can define the max distance in world.py - Default: 1000m
     win_status = check_win(car_player, car_other)
 
@@ -192,6 +201,8 @@ world = World()
 #Loading car files
 car_array = load_cars()
 
+#Welcome message
+hello_message()
 
 # Defines the 2 backgrounds
 bk_1 = Image(Actor('road', anchor=('left', 'top')), 0, 0, "bk_1")
@@ -215,19 +226,28 @@ bt_prev_other = Image(Actor('bt_prev', anchor=('left', 'top')), 64, 385, "bt_pre
 bt_play = Image(Actor('bt_play', anchor=('left', 'top')), 64, 493, "bt_play")
 bt_sair_mm = Image(Actor('bt_sair', anchor=('left', 'top')), 64, 596, "bt_sair_mm")
 
+
+#For Countdown
+count_3 = Image(Actor('count_3', anchor=('left', 'top')), 0, 0, "count_3")
+count_2 = Image(Actor('count_2', anchor=('left', 'top')), 0, 0, "count_2")
+count_1 = Image(Actor('count_1', anchor=('left', 'top')), 0, 0, "count_1")
+count_go = Image(Actor('count_go', anchor=('left', 'top')), 0, 0, "count_go")
+
+
 # Create lists for the itens - Menus
 pause_actors = [bk_pause, bt_voltar, bt_sair]
 lose_actors = [bk_lose, bt_again, bt_sair]
 win_actors = [bk_win, bt_again, bt_sair]
 main_actors = [bk_pause, bt_prev_player, bt_next_player, bt_prev_other, \
     bt_next_other, bt_play, bt_sair_mm]
+countdown_actors = [count_3, count_2, count_1, count_go]
 
 # Create object for each menu
 pause_menu = Menu(pause_actors)
 lose_menu = Menu(lose_actors)
 win_menu = Menu(win_actors)
 main_menu = MainMenu(main_actors, car_array)
-
+countdown_menu = Countdown(countdown_actors)
 
 # Creates the first cars references
 car_player = get_car(car_array, main_menu.player, 330, 500, False)

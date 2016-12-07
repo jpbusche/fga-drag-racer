@@ -9,7 +9,7 @@ class MainMenu(Menu):
         self.cars_len = len(cars)
         self.player = self.cars[0]
         self.player_index = 0
-        self.other = self.cars[1]
+        self.other = self.cars[0]
         self.other_index = 1
         self.in_menu = True
         self.id = "Main Menu"
