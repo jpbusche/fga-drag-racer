@@ -1,5 +1,0 @@
-Após EP3:
-- Adicionar tempo para a troca de marcha automática
-- Adicionar dinheiro e upgrades
-- Adicionar necessidade de embreagem no carro
-- Adicionar possibilidade de fundir o motor
