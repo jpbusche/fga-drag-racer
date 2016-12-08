@@ -9,8 +9,8 @@ FGA Drag Race is a project for "Física para Jogos" class, at Universidade de Br
 
 ### How to run the game:
 ```
-cd fis-jogos
-pgzrun main.py
+pip3 install fga-drag-racer
+drag-racer
 ```
 
 ### How to play the game:

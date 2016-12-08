@@ -1,5 +1,6 @@
 import argparse
 import fga_drag_racer
+import os
 from fga_drag_racer import __version__
 
 
@@ -26,7 +27,9 @@ def main(args=None):
     args = parser.parse_args(args)
 
     # Put your main script logic here
-    print('No action defined for fga_drag_racer module!')
+    path = os.path.dirname(__file__)
+    os.chdir(path)
+    os.system('pgzrun main.py')
 
 
 if __name__ == '__main__':

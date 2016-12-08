@@ -27,7 +27,7 @@ setup(
     version=version,
     author='João Paulo Busche e Matheus de Oliveira Silva',
     author_email='joaopaulo.busche@gmail.com',
-    url='https://github.com/jpbusche/fis-jogos',
+    url='https://github.com/jpbusche/fga-drag-racer',
     description='A drag racer game with python, using pygame.',
     long_description=codecs.open('README.rst', 'rb', 'utf8').read(),
 
@@ -48,7 +48,13 @@ setup(
     # Packages and dependencies
     package_dir={'': 'src'},
     packages=find_packages('src'),
+    include_package_data=True,
+    package_data={
+        'fga_drag_racer.images' : ['*.png']
+    },
     install_requires=[
+        'pgzero',
+        'pygame',
     ],
     extras_require={
         'dev': [
@@ -57,6 +63,12 @@ setup(
     },
 
     # Other configurations
-    zip_safe=False,
+    # zip_safe=False,
     platforms='any',
+
+    entry_points={
+        'console_scripts': [
+            'drag-racer=fga_drag_racer.__main__:main',
+        ]
+    }
 )
